@@ -5,6 +5,7 @@
 #include "zcl.h"
 #include "zps_apl_af.h"
 #include "zps_nwk_nib.h"
+#include "zps_apl_zdo.h"
 #include "AppHardwareApi.h"
 #include "PDM.h"
 
@@ -24,6 +25,7 @@ PRIVATE teNodeState eNodeState;
 PRIVATE void vInitialiseZCL(void);
 PRIVATE void cbGeneralZCLCallback(tsZCL_CallBackEvent *psEvent);
 PRIVATE void vInitialiseBDB(void);
+PRIVATE void vConfigureLeavePolicy(void);
 PRIVATE void vHandleNetworkJoinAndRejoin(void);
 PRIVATE void vHandleNeworkJoinFailed(void);
 PRIVATE void vHandleAFEvent(BDB_tsZpsAfEvent *psZpsAfEvent);
@@ -104,6 +106,7 @@ PUBLIC void APP_vResetNetworkRecords(void)
     ZPS_eAplAibSetApsUseExtendedPanId(0);
     ZPS_vDefaultStack();
     ZPS_vSetKeys();
+    vConfigureLeavePolicy();
     eNodeState = E_NO_NETWORK;
     PDM_eSaveRecordData(PDM_ID_APP_END_DEVICE, &eNodeState, sizeof(teNodeState));
     ZPS_vSaveAllZpsRecords();
@@ -150,6 +153,14 @@ PRIVATE void vInitialiseBDB(void)
     }
     sInitArgs.hBdbEventsMsgQ = &APP_msgBdbEvents;
     BDB_vInit(&sInitArgs);
+    vConfigureLeavePolicy();
+}
+
+PRIVATE void vConfigureLeavePolicy(void)
+{
+    void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
+    ZPS_vNwkNibSetLeaveAllowed(pvNwk, TRUE);
+    ZPS_vNwkNibSetLeaveRejoin(pvNwk, FALSE);
 }
 
 
