@@ -106,7 +106,6 @@ PUBLIC void APP_vResetNetworkRecords(void)
     ZPS_eAplAibSetApsUseExtendedPanId(0);
     ZPS_vDefaultStack();
     ZPS_vSetKeys();
-    vConfigureLeavePolicy();
     eNodeState = E_NO_NETWORK;
     PDM_eSaveRecordData(PDM_ID_APP_END_DEVICE, &eNodeState, sizeof(teNodeState));
     ZPS_vSaveAllZpsRecords();
@@ -166,6 +165,7 @@ PRIVATE void vConfigureLeavePolicy(void)
 
 PRIVATE void vHandleNetworkJoinAndRejoin(void)
 {
+    vConfigureLeavePolicy();
     DBG_vPrintf(TRACE_NODE, "NODE: Device successfully joined network. Saving state to PDM\n");
     eNodeState = E_JOINED;
     PDM_eSaveRecordData(PDM_ID_APP_END_DEVICE, &eNodeState, sizeof(teNodeState));
