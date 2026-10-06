@@ -98,6 +98,16 @@ PS C:\NXP\ProductionFlashProgrammer> .\JN51xxProgrammer.exe -V 0 -s COM5 -f D:\P
    - Cluster: `genPowerCfg`  
 
 
+## Factory reset behavior
+
+When the device receives a Zigbee Leave request without rejoin
+(for example, when it is removed from Zigbee2MQTT), it is returned
+to factory state.
+
+This resets both the Zigbee network state and device configuration,
+including operation mode and prevent-reset settings. After pairing
+the device again, these settings must be configured again if needed.
+
 # JN5169 Documentation
 [Product page](https://www.nxp.com/products/JN5169)</br>
 [Support Resources for JN516x MCUs](https://www.nxp.com/products/wireless-connectivity/zigbee/support-resources-for-jn516x-mcus:SUPPORT-RESOURCES-JN516X-MCUS)</br>
