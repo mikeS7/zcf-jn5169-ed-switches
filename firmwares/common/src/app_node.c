@@ -25,6 +25,7 @@ PRIVATE teNodeState eNodeState;
 PRIVATE void vInitialiseZCL(void);
 PRIVATE void cbGeneralZCLCallback(tsZCL_CallBackEvent *psEvent);
 PRIVATE void vInitialiseBDB(void);
+PRIVATE void vConfigureLeavePolicy(void);
 PRIVATE void vHandleNetworkJoinAndRejoin(void);
 PRIVATE void vHandleNeworkJoinFailed(void);
 PRIVATE void vHandleAFEvent(BDB_tsZpsAfEvent *psZpsAfEvent);
@@ -139,7 +140,6 @@ PRIVATE void vInitialiseBDB(void)
 
     DBG_vPrintf(TRACE_NODE, "NODE: vInitialiseBDB\n");
     BDB_tsInitArgs sInitArgs;
-    void *pvNwk;
     if (bNodeJoined())
     {
         DBG_vPrintf(TRACE_NODE, "NODE: Device is in network. Changing status to E_JOINING...\n");
@@ -148,8 +148,12 @@ PRIVATE void vInitialiseBDB(void)
     }
     sInitArgs.hBdbEventsMsgQ = &APP_msgBdbEvents;
     BDB_vInit(&sInitArgs);
+    vConfigureLeavePolicy();
+}
 
-    pvNwk = ZPS_pvAplZdoGetNwkHandle();
+PRIVATE void vConfigureLeavePolicy(void)
+{
+    void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
     ZPS_vNwkNibSetLeaveAllowed(pvNwk, TRUE);
     ZPS_vNwkNibSetLeaveRejoin(pvNwk, FALSE);
 }
@@ -157,6 +161,7 @@ PRIVATE void vInitialiseBDB(void)
 
 PRIVATE void vHandleNetworkJoinAndRejoin(void)
 {
+    vConfigureLeavePolicy();
     DBG_vPrintf(TRACE_NODE, "NODE: Device successfully joined network. Saving state to PDM\n");
     eNodeState = E_JOINED;
     PDM_eSaveRecordData(PDM_ID_APP_END_DEVICE, &eNodeState, sizeof(teNodeState));
