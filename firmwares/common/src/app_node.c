@@ -5,6 +5,7 @@
 #include "zcl.h"
 #include "zps_apl_af.h"
 #include "zps_nwk_nib.h"
+#include "zps_apl_zdo.h"
 #include "AppHardwareApi.h"
 #include "PDM.h"
 
@@ -138,6 +139,7 @@ PRIVATE void vInitialiseBDB(void)
 
     DBG_vPrintf(TRACE_NODE, "NODE: vInitialiseBDB\n");
     BDB_tsInitArgs sInitArgs;
+    void *pvNwk;
     if (bNodeJoined())
     {
         DBG_vPrintf(TRACE_NODE, "NODE: Device is in network. Changing status to E_JOINING...\n");
@@ -146,6 +148,10 @@ PRIVATE void vInitialiseBDB(void)
     }
     sInitArgs.hBdbEventsMsgQ = &APP_msgBdbEvents;
     BDB_vInit(&sInitArgs);
+
+    pvNwk = ZPS_pvAplZdoGetNwkHandle();
+    ZPS_vNwkNibSetLeaveAllowed(pvNwk, TRUE);
+    ZPS_vNwkNibSetLeaveRejoin(pvNwk, FALSE);
 }
 
 
